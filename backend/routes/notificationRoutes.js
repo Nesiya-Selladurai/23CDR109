@@ -1,54 +1,47 @@
 const express = require("express");
-const axios = require("axios");
-
-const {
-    getTopNotifications
-} = require("../services/priorityService");
-
 const router = express.Router();
 
+const { getTopNotifications } = require("../services/priorityService");
+
 router.get("/", async (req, res) => {
-
     try {
-
         let notifications = [];
 
         try {
-
-            const response = await axios.get(
+            // External API call
+            const response = await fetch(
                 "http://4.224.186.213/evaluation-service/notifications",
                 {
+                    method: "GET",
                     headers: {
                         Authorization: "Bearer RyZBcy"
                     }
                 }
             );
 
-            notifications = response.data;
+            if (!response.ok) {
+                throw new Error("Failed to fetch external API");
+            }
+
+            notifications = await response.json();
 
         } catch (apiError) {
+            console.log("External API failed. Using fallback data.");
 
-            console.log(
-                "External API failed. Using fallback data."
-            );
-
-            // Fallback mock data
+            // Fallback data
             notifications = [
-
                 {
                     ID: 1,
                     Type: "Placement",
                     Message: "Amazon Hiring",
                     Timestamp: "2026-05-18T10:00:00"
                 },
-
                 {
                     ID: 2,
                     Type: "Result",
                     Message: "Semester Results Published",
                     Timestamp: "2026-05-18T08:00:00"
                 },
-
                 {
                     ID: 3,
                     Type: "Event",
@@ -58,19 +51,18 @@ router.get("/", async (req, res) => {
             ];
         }
 
-        const topNotifications =
-            getTopNotifications(notifications, 10);
+        // Sort / filter logic
+        const topNotifications = getTopNotifications(notifications, 10);
 
-        res.json({
+        return res.json({
             total: topNotifications.length,
             data: topNotifications
         });
 
     } catch (error) {
+        console.error("Server Error:", error);
 
-        console.log(error.message);
-
-        res.status(500).json({
+        return res.status(500).json({
             message: "Internal Server Error"
         });
     }

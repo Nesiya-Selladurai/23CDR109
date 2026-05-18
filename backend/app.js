@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 
 const logger = require("./middleware/logger");
 
@@ -7,19 +8,15 @@ const notificationRoutes =
 
 const app = express();
 
+app.use(cors());
+
 app.use(express.json());
 
-/*
-    Logging Middleware
-*/
 app.use(logger);
 
-/*
-    Notification Routes
-*/
 app.use("/notifications", notificationRoutes);
 
-const PORT = 3000;
+const PORT = 5000;
 
 app.listen(PORT, () => {
 
