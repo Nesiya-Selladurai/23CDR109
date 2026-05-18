@@ -1,0 +1,19 @@
+{
+  "name": "campus-notification-service",
+  "version": "1.0.0",
+  "description": "A simple notification service for the campus",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "keywords": [
+    "notification",
+    "campus"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.16.1",
+    "express": "^4.22.2"
+  }
+}
